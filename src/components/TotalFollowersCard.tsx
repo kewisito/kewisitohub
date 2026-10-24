@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, Radio, Target, Zap } from 'lucide-react';
+import { Users, TrendingUp, Radio } from 'lucide-react';
 import { SocialNetwork } from '../types';
 import { NEXT_GOAL } from '../data/socials';
 
@@ -18,7 +18,7 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
   // Smooth number ticker effect on total change
   useEffect(() => {
     let start = displayCount;
-    const duration = 500;
+    const duration = 600; // ms
     const stepTime = 16;
     const totalSteps = Math.max(1, duration / stepTime);
     const increment = (total - start) / totalSteps;
@@ -26,10 +26,7 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
 
     const timer = setInterval(() => {
       current += increment;
-      if (
-        (increment >= 0 && current >= total) ||
-        (increment < 0 && current <= total)
-      ) {
+      if ((increment >= 0 && current >= total) || (increment < 0 && current <= total)) {
         setDisplayCount(total);
         clearInterval(timer);
       } else {
@@ -51,75 +48,66 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
   const formattedRemaining = new Intl.NumberFormat('es-ES').format(remaining);
 
   return (
-    <div className="relative rounded-xl p-4 sm:p-5 bg-gradient-to-br from-[#0c0f18] via-[#090b12] to-[#07080d] border-2 border-slate-700/80 shadow-2xl overflow-hidden group">
-      {/* Corner Technical Crosshairs */}
-      <div className="absolute top-2 left-2 w-2 h-2 border-t-2 border-l-2 border-lime-500/60" />
-      <div className="absolute top-2 right-2 w-2 h-2 border-t-2 border-r-2 border-lime-500/60" />
-      <div className="absolute bottom-2 left-2 w-2 h-2 border-b-2 border-l-2 border-lime-500/60" />
-      <div className="absolute bottom-2 right-2 w-2 h-2 border-b-2 border-r-2 border-lime-500/60" />
+    <div className="relative rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-slate-900/90 via-purple-950/40 to-slate-900/90 border-2 border-purple-500/40 shadow-2xl backdrop-blur-md overflow-hidden group">
+      {/* Background ambient glow */}
+      <div className="absolute -top-12 -right-12 w-40 h-40 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-blue-600/15 rounded-full blur-2xl pointer-events-none" />
 
-      {/* Header bar */}
+      {/* Header bar (without the removed edit & sparkle buttons) */}
       <div className="flex items-center justify-between mb-3 z-10 relative">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded bg-lime-500/10 border border-lime-500/30 flex items-center justify-center text-lime-400">
-            <Activity className="w-4 h-4" />
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
+            <Users className="w-4 h-4" />
           </div>
           <div>
-            <span className="font-mono text-[9px] font-bold tracking-widest text-lime-400 uppercase">
-              MASTER TALLY // TOTAL SEGUIDORES
+            <span className="text-[11px] font-bold tracking-widest text-purple-300 uppercase">
+              Suma Global
             </span>
-            <h4 className="font-display text-base font-black text-white uppercase tracking-wider leading-none">
-              SUMA GLOBAL DE LA COMUNIDAD
+            <h4 className="text-sm font-extrabold text-white uppercase tracking-wider">
+              Total Seguidores
             </h4>
           </div>
         </div>
 
-        {/* Live telemetry pulse */}
-        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#07090f] border border-slate-800 text-[10px] font-mono text-lime-400">
-          <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
-          <span>SYNC LIVE</span>
+        {/* Live sync indicator */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/60 border border-purple-500/30 text-[11px] font-mono text-purple-300">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>En vivo</span>
         </div>
       </div>
 
-      {/* Main big digital LED display */}
-      <div className="my-3 z-10 relative bg-[#06080e]/90 p-3 sm:p-4 rounded-lg border border-slate-800/90 shadow-inner">
-        <div className="flex items-baseline justify-between gap-2">
-          <div className="flex items-baseline gap-2">
-            <span className="font-display font-black text-4xl sm:text-5xl tracking-tight text-white drop-shadow-[0_0_12px_rgba(163,230,53,0.3)]">
-              {formattedTotal}
-            </span>
-            <span className="font-mono text-[11px] font-bold text-lime-400 uppercase tracking-widest">
-              SEGUIDORES ACTIVOS
-            </span>
-          </div>
-
-          <div className="text-right hidden sm:block">
-            <span className="font-mono text-[9px] text-slate-500 uppercase block">
-              PLATAFORMAS CONECTADAS
-            </span>
-            <span className="font-mono text-xs font-bold text-slate-300">
-              {socials.length} CANALES
-            </span>
-          </div>
+      {/* Main big counter display */}
+      <div className="my-3 z-10 relative">
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl sm:text-4xl lg:text-4xl font-black font-mono tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-purple-300 drop-shadow-sm">
+            {formattedTotal}
+          </span>
+          <span className="text-xs font-semibold text-purple-300 uppercase tracking-wider">
+            seguidores combinados
+          </span>
         </div>
+        <p className="text-xs text-slate-400 mt-0.5">
+          Audiencia activa sincronizada en tiempo real.
+        </p>
       </div>
 
-      {/* Community distribution audio-meter style visualizer */}
+      {/* Community distribution segmented bar */}
       <div className="space-y-1.5 z-10 relative pt-1">
-        <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
-          <span className="tracking-wider uppercase">BALANCE POR PLATAFORMA</span>
-          <span className="text-slate-500">100% DISTRIBUCIÓN</span>
+        <div className="flex items-center justify-between text-[11px] text-slate-400">
+          <span>Distribución por red</span>
+          <span className="font-mono text-purple-300">
+            {socials.length} plataformas
+          </span>
         </div>
 
-        {/* Multi-segment broadcast bar */}
-        <div className="h-3 w-full bg-[#06080e] rounded-sm overflow-hidden flex p-0.5 gap-0.5 border border-slate-800">
+        <div className="h-2.5 w-full bg-slate-800/90 rounded-full overflow-hidden flex p-0.5 gap-0.5 border border-slate-700/60">
           {socials.map((net) => {
             const widthPct = total > 0 ? (net.followers / total) * 100 : 0;
             return (
               <div
                 key={net.id}
                 title={`${net.name}: ${net.followers.toLocaleString('es-ES')} (${widthPct.toFixed(1)}%)`}
-                className="h-full rounded-[1px] transition-all hover:opacity-100 opacity-90"
+                className="h-full rounded-sm transition-all hover:opacity-90"
                 style={{
                   width: `${widthPct}%`,
                   backgroundColor: net.brandColor,
@@ -130,16 +118,16 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
         </div>
       </div>
 
-      {/* Goal Progress readout */}
-      <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono z-10 relative">
+      {/* Goal Progress to next milestone */}
+      <div className="mt-3.5 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs z-10 relative">
         <div className="flex items-center gap-1.5 text-slate-300">
-          <Target className="w-3.5 h-3.5 text-lime-400" />
+          <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
           <span>
-            META: <strong className="text-white">{formattedGoal}</strong>
+            Meta: <strong className="text-white font-mono">{formattedGoal}</strong>
           </span>
         </div>
-        <span className="text-[11px] text-lime-400 font-semibold">
-          {progressPercent}% COMPLETADO (FALTAN {formattedRemaining})
+        <span className="text-[11px] text-purple-300 font-mono">
+          Faltan {formattedRemaining} ({progressPercent}%)
         </span>
       </div>
     </div>

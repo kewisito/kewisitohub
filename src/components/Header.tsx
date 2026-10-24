@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Activity, Radio, Cpu } from 'lucide-react';
+import React from 'react';
+import { Radio } from 'lucide-react';
 
 interface HeaderProps {
   isLiveUpdating?: boolean;
@@ -10,96 +10,61 @@ export const Header: React.FC<HeaderProps> = ({
   isLiveUpdating = true,
   lastUpdated,
 }) => {
-  const [time, setTime] = useState('');
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(
-        now.toLocaleTimeString('es-ES', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        })
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <header className="w-full border-b border-slate-800/90 bg-[#090b10]/95 backdrop-blur-xl sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
-        {/* Left: Broadcast Brand Identity */}
-        <div className="flex items-center gap-3.5">
-          {/* Custom Studio Emblem with Kiwi accent */}
-          <div className="relative group">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-lime-500 via-emerald-600 to-slate-900 p-[1.5px] shadow-lg shadow-lime-950/40">
-              <div className="w-full h-full rounded-[6.5px] bg-[#0c0e14] flex items-center justify-center relative overflow-hidden">
-                <span className="font-display font-black text-xl text-lime-400 tracking-tighter">
-                  KW
+    <header className="w-full border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+        {/* Left: Streamer identity & avatar */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="relative">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 p-[2px] shadow-lg shadow-purple-950/60">
+              <div className="w-full h-full rounded-2xl bg-slate-950 flex items-center justify-center overflow-hidden">
+                <span className="text-lg sm:text-xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-purple-200">
+                  K
                 </span>
-                {/* Tech corner accent */}
-                <span className="absolute top-0 right-0 w-1.5 h-1.5 bg-lime-400" />
               </div>
             </div>
+            {/* Live pulsing dot */}
+            <span
+              className="absolute -bottom-1 -right-1 flex h-3.5 w-3.5"
+              title="Streamer Activo"
+            >
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 border-2 border-slate-950" />
+            </span>
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-display font-black text-xl sm:text-2xl text-white tracking-wider leading-none uppercase">
+              <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
                 KEWISITO
               </h1>
-              <span className="font-mono text-[9px] font-bold text-lime-400 bg-lime-950/70 border border-lime-500/40 px-1.5 py-0.5 rounded tracking-widest uppercase">
-                STATION // VERIFIED
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-md">
+                Verificado
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mt-0.5">
-              <span className="text-purple-400 font-semibold">
-                TWITCH:@kewisitotv
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="text-purple-400 font-mono font-medium">
+                @kewisitotv
               </span>
-              <span className="text-slate-600">/</span>
-              <span className="text-slate-300 font-semibold">
-                REDES:@kewisito
-              </span>
-              <span className="text-slate-600 hidden sm:inline">/</span>
-              <span className="text-slate-500 hidden sm:inline text-[11px]">
-                MARACAIBO, VZLA
+              <span className="text-slate-600">·</span>
+              <span className="text-slate-300 font-mono">@kewisito</span>
+              <span className="text-slate-600 hidden sm:inline">·</span>
+              <span className="hidden sm:inline text-slate-400">
+                Creador de Contenido & Streamer
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right: Technical Telemetry Status */}
-        <div className="flex items-center gap-3 sm:gap-5 text-xs font-mono">
-          {/* Studio clock */}
-          <div className="hidden md:flex flex-col text-right">
-            <span className="text-[9px] uppercase tracking-widest text-slate-500">
-              STUDIO CLOCK
-            </span>
-            <span className="text-slate-200 font-semibold tracking-wider">
-              {time || '--:--:--'}
-            </span>
-          </div>
-
-          <div className="h-6 w-px bg-slate-800 hidden md:block" />
-
-          {/* Real-time telemetry feed badge */}
-          <div className="flex items-center gap-2 bg-[#0c0e15] border border-slate-800/90 px-2.5 py-1.5 rounded-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-80" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500" />
-            </span>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-lime-400 tracking-wider uppercase leading-none">
-                LIVE TELEMETRY
-              </span>
-              <span className="text-[9px] text-slate-500 leading-none mt-0.5 hidden sm:inline">
-                API SYNC ACTIVE
-              </span>
-            </div>
-          </div>
+        {/* Right side: Real-time live status indicator */}
+        <div className="flex items-center gap-2 text-xs">
+          <span className="flex h-2.5 w-2.5 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+          </span>
+          <span className="text-emerald-400 font-mono font-medium text-[11px] sm:text-xs">
+            EN TIEMPO REAL
+          </span>
         </div>
       </div>
     </header>
