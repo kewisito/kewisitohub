@@ -1,0 +1,6 @@
+{
+  "name": "Kewisito Hub - Redes Sociales & Directo Twitch",
+  "description": "Portal oficial de Kewisito (@kewisito) y canal de Twitch (@kewisitotv) con contador en tiempo real de seguidores y directo integrado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
