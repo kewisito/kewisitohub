@@ -143,13 +143,13 @@ export const TwitchPlayer: React.FC<TwitchPlayerProps> = ({
       </div>
 
       {/* Main Viewport Container */}
-      <div className="relative flex-1 bg-black min-h-[340px] sm:min-h-[420px] lg:min-h-[500px] flex flex-col md:flex-row overflow-hidden">
+      <div className="relative flex-1 bg-black min-h-[420px] sm:min-h-[500px] md:min-h-[560px] lg:min-h-[620px] xl:min-h-[680px] flex flex-col md:flex-row overflow-hidden">
         {/* Stream video player */}
         <div
           className={`relative h-full transition-all duration-300 flex-1 ${
             showChat ? 'md:w-2/3 lg:w-3/4' : 'w-full'
           }`}
-          style={{ minHeight: '340px' }}
+          style={{ minHeight: '420px' }}
         >
           <iframe
             key={`stream-${reloadKey}`}

@@ -165,13 +165,13 @@ export default function App() {
       </div>
 
       {/* Main Content Area - Faithfully implements user wireframe */}
-      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <main className="relative z-10 flex-1 max-w-[1520px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
           {/* ======================================================== */}
           {/* LEFT COLUMN: "REDES" */}
           {/* ======================================================== */}
           <section
-            className={`lg:col-span-5 flex flex-col gap-4 ${
+            className={`lg:col-span-4 xl:col-span-4 flex flex-col gap-4 ${
               mobileTab === 'directo' ? 'hidden lg:flex' : 'flex'
             }`}
             aria-label="Redes Sociales de Kewisito"
@@ -211,10 +211,10 @@ export default function App() {
           </section>
 
           {/* ======================================================== */}
-          {/* RIGHT COLUMN: "directo" */}
+          {/* RIGHT COLUMN: "directo" (Expanded) */}
           {/* ======================================================== */}
           <section
-            className={`lg:col-span-7 flex flex-col gap-4 h-full ${
+            className={`lg:col-span-8 xl:col-span-8 flex flex-col gap-4 h-full ${
               mobileTab === 'redes' ? 'hidden lg:flex' : 'flex'
             }`}
             aria-label="Directo de Twitch"
@@ -289,7 +289,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="mt-auto border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md py-6 px-4 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div className="max-w-[1520px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div className="flex items-center gap-2">
             <span className="font-extrabold text-white tracking-wider">
               KEWISITO HUB
