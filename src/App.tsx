@@ -6,7 +6,8 @@ import {
   Image as ImageIcon,
   X,
   Activity,
-  Terminal,
+  Bell,
+  BellRing,
   Zap,
 } from 'lucide-react';
 import { SocialNetwork } from './types';
@@ -15,6 +16,8 @@ import { SocialCard } from './components/SocialCard';
 import { TotalFollowersCard } from './components/TotalFollowersCard';
 import { TwitchPlayer } from './components/TwitchPlayer';
 import { Header } from './components/Header';
+import { ToastNotification, ToastData } from './components/ToastNotification';
+import { playBroadcastChime } from './utils/audio';
 
 export default function App() {
   const [socials, setSocials] = useState<SocialNetwork[]>(INITIAL_SOCIALS);
@@ -27,8 +30,70 @@ export default function App() {
   }>({ isLive: false });
   const [showWireframeModal, setShowWireframeModal] = useState(false);
   const [mobileTab, setMobileTab] = useState<'all' | 'directo' | 'redes'>('all');
+  const [toast, setToast] = useState<ToastData | null>(null);
+  const [browserNotificationAllowed, setBrowserNotificationAllowed] =
+    useState<boolean>(() => {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        return Notification.permission === 'granted';
+      }
+      return false;
+    });
 
   const isMountedRef = useRef(true);
+  const prevIsLiveRef = useRef<boolean | null>(null);
+  const streamSectionRef = useRef<HTMLDivElement>(null);
+
+  // Trigger live transition alert (both in-app toast + browser notification + audio chime)
+  const triggerLiveAlert = (title?: string, game?: string) => {
+    // 1. Play broadcast chime
+    playBroadcastChime();
+
+    // 2. Set in-app toast notification
+    setToast({
+      id: `live-${Date.now()}`,
+      channel: 'kewisitotv',
+      title: title || '¡Kewisito acaba de iniciar transmisión en Twitch!',
+      game: game || 'Just Chatting',
+    });
+
+    // 3. Native Browser Notification (if supported & allowed)
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'granted') {
+        try {
+          const notif = new Notification('🔴 ¡KEWISITO ESTÁ EN DIRECTO!', {
+            body: `${title || 'Transmisión en vivo en Twitch'} ${
+              game ? `· ${game}` : ''
+            }`,
+            icon: '/assets/aistudio/imagen_49e2f78e.png',
+            tag: 'kewisito-live-stream',
+          });
+
+          notif.onclick = () => {
+            window.focus();
+            handleWatchNow();
+          };
+        } catch (err) {
+          console.warn('Native notification error', err);
+        }
+      }
+    }
+  };
+
+  // Request native browser notifications permission
+  const requestNotificationPermission = async () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      try {
+        const permission = await Notification.requestPermission();
+        setBrowserNotificationAllowed(permission === 'granted');
+        if (permission === 'granted') {
+          // Play a small confirmation chime
+          playBroadcastChime();
+        }
+      } catch (err) {
+        console.error('Error requesting notification permission', err);
+      }
+    }
+  };
 
   // Background real-time synchronization function
   const syncFollowers = async () => {
@@ -68,8 +133,17 @@ export default function App() {
           );
 
           if (twitch) {
+            const isLiveNow = !!twitch.isLive;
+
+            // STATUS TRANSITION DETECTION: alert when changing from 'offline' to 'live'
+            if (prevIsLiveRef.current === false && isLiveNow === true) {
+              triggerLiveAlert(twitch.title, twitch.game);
+            }
+
+            prevIsLiveRef.current = isLiveNow;
+
             setStreamInfo({
-              isLive: !!twitch.isLive,
+              isLive: isLiveNow,
               title: twitch.title,
               game: twitch.game,
             });
@@ -81,7 +155,7 @@ export default function App() {
         }
       }
     } catch {
-      // Fallback to direct decapi public call for twitch
+      // Fallback to client-side public API
     }
 
     try {
@@ -124,6 +198,13 @@ export default function App() {
 
   const totalFollowers = socials.reduce((acc, curr) => acc + curr.followers, 0);
 
+  const handleWatchNow = () => {
+    setMobileTab('directo');
+    if (streamSectionRef.current) {
+      streamSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#08090d] text-slate-100 flex flex-col font-sans selection:bg-lime-500 selection:text-black relative">
       {/* Precision studio grid overlay */}
@@ -148,11 +229,56 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-slate-500 text-[11px]">
+          <div className="flex items-center gap-2.5 sm:gap-3 text-slate-500 text-[11px]">
+            {/* Native browser notifications permission toggle */}
+            <button
+              type="button"
+              onClick={requestNotificationPermission}
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                browserNotificationAllowed
+                  ? 'bg-lime-950/40 text-lime-400 border-lime-500/40'
+                  : 'bg-[#121520] text-slate-400 border-slate-800 hover:text-white'
+              }`}
+              title={
+                browserNotificationAllowed
+                  ? 'Notificaciones de navegador activadas'
+                  : 'Activar alertas del navegador al iniciar directo'
+              }
+            >
+              {browserNotificationAllowed ? (
+                <BellRing className="w-3 h-3 text-lime-400" />
+              ) : (
+                <Bell className="w-3 h-3 text-slate-400" />
+              )}
+              <span className="hidden sm:inline">
+                {browserNotificationAllowed ? 'ALERTAS: ACTIVAS' : 'ACTIVAR ALERTAS'}
+              </span>
+            </button>
+
+            {/* Test alert trigger for simulation */}
+            <button
+              type="button"
+              onClick={() =>
+                triggerLiveAlert(
+                  '¡PROBANDO STREAM EN VIVO! (Simulación)',
+                  'Just Chatting / Valorant'
+                )
+              }
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-950/40 text-red-400 hover:text-red-300 border border-red-500/40 hover:bg-red-900/40 transition-colors cursor-pointer"
+              title="Simular alerta de stream offline -> live"
+            >
+              <Radio className="w-3 h-3" />
+              <span>PROBAR ALERTA LIVE</span>
+            </button>
+
+            <span className="text-slate-700 hidden sm:inline">|</span>
+
             {lastSyncTime && (
-              <span>SYNC TIME: <span className="text-slate-300 font-semibold">{lastSyncTime}</span></span>
+              <span className="hidden md:inline">
+                SYNC: <span className="text-slate-300 font-semibold">{lastSyncTime}</span>
+              </span>
             )}
-            <span className="text-slate-700">|</span>
+
             <button
               type="button"
               onClick={() => setShowWireframeModal(true)}
@@ -246,6 +372,7 @@ export default function App() {
           {/* RIGHT COLUMN: "directo" */}
           {/* ======================================================== */}
           <section
+            ref={streamSectionRef}
             className={`lg:col-span-7 flex flex-col gap-3.5 h-full ${
               mobileTab === 'redes' ? 'hidden lg:flex' : 'flex'
             }`}
@@ -343,6 +470,13 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Browser Toast Alert Notification */}
+      <ToastNotification
+        toast={toast}
+        onClose={() => setToast(null)}
+        onWatchNow={handleWatchNow}
+      />
 
       {/* Wireframe Preview Modal */}
       {showWireframeModal && (
