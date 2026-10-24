@@ -5,7 +5,9 @@ import {
   Radio,
   Image as ImageIcon,
   X,
-  RefreshCw,
+  Activity,
+  Terminal,
+  Zap,
 } from 'lucide-react';
 import { SocialNetwork } from './types';
 import { INITIAL_SOCIALS } from './data/socials';
@@ -34,12 +36,12 @@ export default function App() {
     setIsSyncing(true);
 
     try {
-      // 1. Try our full-stack backend endpoint
       const response = await fetch('/api/followers');
       if (response.ok) {
         const json = await response.json();
         if (json.success && json.data) {
-          const { twitch, tiktok, instagram, youtube, discord, whatsapp } = json.data;
+          const { twitch, tiktok, instagram, youtube, discord, whatsapp } =
+            json.data;
 
           setSocials((prev) =>
             prev.map((item) => {
@@ -79,12 +81,13 @@ export default function App() {
         }
       }
     } catch {
-      // If server route is booting or unavailable, proceed to client-side public API
+      // Fallback to direct decapi public call for twitch
     }
 
-    // 2. Client-side fallback to decapi public API for Twitch
     try {
-      const twitchRes = await fetch('https://decapi.me/twitch/followcount/kewisitotv');
+      const twitchRes = await fetch(
+        'https://decapi.me/twitch/followcount/kewisitotv'
+      );
       if (twitchRes.ok) {
         const text = await twitchRes.text();
         const count = parseInt(text.trim(), 10);
@@ -97,21 +100,21 @@ export default function App() {
         }
       }
     } catch {
-      // Ignore network errors
+      // Ignore
     }
 
     setLastSyncTime(new Date().toLocaleTimeString('es-ES'));
     setIsSyncing(false);
   };
 
-  // Continuous background synchronization interval (updates constantly every 8 seconds)
+  // Continuous background synchronization interval (polls every 6 seconds)
   useEffect(() => {
     isMountedRef.current = true;
-    syncFollowers(); // Initial immediate sync
+    syncFollowers();
 
     const intervalId = setInterval(() => {
       syncFollowers();
-    }, 8000); // Poll public APIs every 8 seconds in the background
+    }, 6000);
 
     return () => {
       isMountedRef.current = false;
@@ -122,128 +125,115 @@ export default function App() {
   const totalFollowers = socials.reduce((acc, curr) => acc + curr.followers, 0);
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col font-sans selection:bg-purple-600 selection:text-white">
-      {/* Dynamic ambient cyber background glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-purple-900/15 rounded-full blur-[140px]" />
-        <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] bg-indigo-900/10 rounded-full blur-[160px]" />
-        <div className="absolute bottom-[-10%] left-[25%] w-[40vw] h-[40vw] bg-cyan-900/10 rounded-full blur-[140px]" />
-        {/* High-tech grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-[#08090d] text-slate-100 flex flex-col font-sans selection:bg-lime-500 selection:text-black relative">
+      {/* Precision studio grid overlay */}
+      <div className="fixed inset-0 studio-grid pointer-events-none opacity-40 z-0" />
 
-      {/* Top Navbar - Clean, without top-right buttons as requested */}
+      {/* Top Navbar */}
       <Header isLiveUpdating={true} lastUpdated={lastSyncTime} />
 
-      {/* Sub-header / Real-time sync status strip */}
-      <div className="relative z-10 border-b border-slate-800/60 bg-gradient-to-r from-purple-950/30 via-slate-900/40 to-slate-950/60 px-4 py-2">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="text-emerald-400 font-semibold font-mono text-[11px] sm:text-xs">
-              Conectado a APIs públicas en tiempo real
-            </span>
-            <span className="text-slate-600 hidden sm:inline">·</span>
-            <span className="text-slate-300 hidden sm:inline">
-              Twitch <strong className="text-white">@kewisitotv</strong> · Redes <strong className="text-white">@kewisito</strong>
-            </span>
+      {/* Broadcast Technical Status Strip */}
+      <div className="relative z-10 border-b border-slate-800/80 bg-[#07080c]/90 px-4 py-2 font-mono text-xs">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 text-lime-400 font-bold text-[11px]">
+              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
+              <span>STATION ONLINE</span>
+            </div>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+              <span>FEED: <strong className="text-white">TWITCH @kewisitotv</strong></span>
+              <span className="text-slate-600">·</span>
+              <span>NETWORK: <strong className="text-white">@kewisito</strong></span>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 text-slate-400">
+          <div className="flex items-center gap-3 text-slate-500 text-[11px]">
             {lastSyncTime && (
-              <span className="text-[11px] text-slate-400 font-mono">
-                Última sincronización: {lastSyncTime}
-              </span>
+              <span>SYNC TIME: <span className="text-slate-300 font-semibold">{lastSyncTime}</span></span>
             )}
+            <span className="text-slate-700">|</span>
             <button
               type="button"
               onClick={() => setShowWireframeModal(true)}
-              className="inline-flex items-center gap-1.5 text-xs text-purple-300 hover:text-purple-200 hover:underline cursor-pointer"
+              className="inline-flex items-center gap-1 text-slate-400 hover:text-lime-300 transition-colors cursor-pointer"
             >
-              <ImageIcon className="w-3.5 h-3.5" />
-              <span>Ver boceto original</span>
+              <ImageIcon className="w-3.5 h-3.5 text-lime-400" />
+              <span>BOCETO</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Tab Switcher (Visible on small screens) */}
+      {/* Mobile Switcher (Small Screens Only) */}
       <div className="lg:hidden px-4 pt-3 z-10">
-        <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800">
+        <div className="grid grid-cols-2 p-1 bg-[#0d0f17] rounded-lg border border-slate-800 font-mono text-xs font-bold">
           <button
             type="button"
             onClick={() => setMobileTab('redes')}
-            className={`py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 rounded transition-all flex items-center justify-center gap-1.5 ${
               mobileTab === 'redes'
-                ? 'bg-purple-600 text-white shadow-md'
+                ? 'bg-lime-500 text-black font-extrabold shadow'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
-            <span>REDES & SEGUIDORES</span>
+            <span>CANALES & TALLY</span>
           </button>
           <button
             type="button"
             onClick={() => setMobileTab('directo')}
-            className={`py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 rounded transition-all flex items-center justify-center gap-1.5 ${
               mobileTab === 'directo'
-                ? 'bg-purple-600 text-white shadow-md'
+                ? 'bg-purple-600 text-white font-extrabold shadow'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
             <Tv className="w-3.5 h-3.5" />
-            <span>DIRECTO TWITCH</span>
+            <span>TWITCH LIVE</span>
           </button>
         </div>
       </div>
 
-      {/* Main Content Area - Faithfully implements user wireframe */}
+      {/* Main Studio Viewport (Wireframe-aligned composition) */}
       <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* ======================================================== */}
           {/* LEFT COLUMN: "REDES" */}
           {/* ======================================================== */}
           <section
-            className={`lg:col-span-5 flex flex-col gap-4 ${
+            className={`lg:col-span-5 flex flex-col gap-3.5 ${
               mobileTab === 'directo' ? 'hidden lg:flex' : 'flex'
             }`}
-            aria-label="Redes Sociales de Kewisito"
+            aria-label="Canales oficiales de Kewisito"
           >
             {/* Column Header: "REDES" */}
-            <div className="flex items-center justify-between pb-1">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-purple-500 to-indigo-600" />
-                <h2 className="text-xl sm:text-2xl font-black text-white tracking-wider uppercase">
+                <div className="w-2 h-5 bg-lime-400 rounded-sm" />
+                <h2 className="font-display font-black text-2xl text-white tracking-widest uppercase">
                   REDES
                 </h2>
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Tiempo Real</span>
+              <div className="flex items-center gap-1.5 font-mono text-[10px] text-lime-400 uppercase tracking-widest">
+                <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
+                <span>REAL-TIME FEEDS</span>
               </div>
             </div>
 
-            {/* List of social media casillas (Clean, without the action buttons) */}
-            <div className="flex flex-col gap-2.5">
-              {socials.map((net) => (
+            {/* List of social rack channel strips */}
+            <div className="flex flex-col gap-2">
+              {socials.map((net, idx) => (
                 <SocialCard
                   key={net.id}
                   network={net}
                   totalFollowers={totalFollowers}
+                  channelIndex={idx + 1}
                 />
               ))}
             </div>
 
-            {/* Bottom Section: "total seguidores" (Clean, without the edit/confetti buttons) */}
+            {/* Bottom Section: "total seguidores" master tally */}
             <div className="mt-1">
               <TotalFollowersCard
                 socials={socials}
@@ -256,28 +246,28 @@ export default function App() {
           {/* RIGHT COLUMN: "directo" */}
           {/* ======================================================== */}
           <section
-            className={`lg:col-span-7 flex flex-col gap-4 h-full ${
+            className={`lg:col-span-7 flex flex-col gap-3.5 h-full ${
               mobileTab === 'redes' ? 'hidden lg:flex' : 'flex'
             }`}
             aria-label="Directo de Twitch"
           >
             {/* Column Header: "directo" */}
-            <div className="flex items-center justify-between pb-1">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-red-500 to-pink-600" />
-                <h2 className="text-xl sm:text-2xl font-black text-white tracking-wider uppercase">
-                  directo
+                <div className="w-2 h-5 bg-red-500 rounded-sm" />
+                <h2 className="font-display font-black text-2xl text-white tracking-widest uppercase">
+                  DIRECTO
                 </h2>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-950/60 border border-red-500/30 px-2.5 py-1 rounded-full">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  kewisitotv en Twitch
+              <div className="flex items-center gap-2 font-mono text-[10px]">
+                <span className="text-slate-400">CHANNEL:</span>
+                <span className="text-purple-400 font-bold uppercase">
+                  @kewisitotv // TWITCH
                 </span>
               </div>
             </div>
 
-            {/* Twitch Player Container (Clean, without purple Twitch.tv button) */}
+            {/* Twitch Studio Monitor */}
             <div className="flex-1">
               <TwitchPlayer
                 channel="kewisitotv"
@@ -287,41 +277,41 @@ export default function App() {
               />
             </div>
 
-            {/* Stream info status badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">
-                  Canal Principal
+            {/* Technical Station Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 font-mono">
+              <div className="p-3.5 rounded-lg bg-[#0d0f17] border border-slate-800">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-purple-400 block">
+                  CANAL PRINCIPAL
                 </span>
-                <p className="text-sm font-bold text-white font-mono mt-0.5">
+                <p className="text-sm font-black text-white mt-0.5">
                   twitch.tv/kewisitotv
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Transmisión oficial de Kewisito.
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Transmisión oficial de Kewisito en Twitch.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
-                  Comunidad en Vivo
+              <div className="p-3.5 rounded-lg bg-[#0d0f17] border border-slate-800">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-lime-400 block">
+                  AUDIENCIA GLOBAL
                 </span>
-                <p className="text-sm font-bold text-white font-mono mt-0.5">
-                  {new Intl.NumberFormat('es-ES').format(totalFollowers)} seguidores
+                <p className="text-sm font-black text-white mt-0.5">
+                  {new Intl.NumberFormat('es-ES').format(totalFollowers)} TOTAL
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Actualización constante en segundo plano.
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Cifras extraídas en vivo desde APIs públicas.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">
-                  Comunidad Directa
+              <div className="p-3.5 rounded-lg bg-[#0d0f17] border border-slate-800">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-cyan-400 block">
+                  HUB COMUNITARIO
                 </span>
-                <p className="text-sm font-bold text-white font-mono mt-0.5">
+                <p className="text-sm font-black text-white mt-0.5">
                   Discord & WhatsApp
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Avisos inmediatos de directos y eventos.
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Alertas directas de streams y eventos.
                 </p>
               </div>
             </div>
@@ -329,29 +319,26 @@ export default function App() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md py-6 px-4 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      {/* Industrial Broadcast Footer */}
+      <footer className="mt-auto border-t border-slate-800/90 bg-[#07080c] py-4 px-4 z-10 font-mono text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-white tracking-wider">
-              KEWISITO HUB
+            <span className="font-display font-black text-white tracking-widest text-sm">
+              KEWISITO BROADCAST HUB
             </span>
-            <span>·</span>
-            <span>Canal Twitch: @kewisitotv · Redes: @kewisito</span>
+            <span className="text-slate-700">/</span>
+            <span className="text-[11px]">TWITCH: @kewisitotv · REDES: @kewisito</span>
           </div>
 
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="flex items-center gap-1.5 text-emerald-400 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Sincronización activa
-            </span>
-            <span>·</span>
+          <div className="flex items-center gap-3 text-[11px]">
+            <span className="text-lime-400">TELEMETRY: ACTIVE (6s)</span>
+            <span className="text-slate-700">/</span>
             <button
               type="button"
               onClick={() => setShowWireframeModal(true)}
-              className="hover:text-purple-300 transition-colors cursor-pointer"
+              className="text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
-              Ver boceto original
+              VER BOCETO ORIGINAL
             </button>
           </div>
         </div>
@@ -359,34 +346,34 @@ export default function App() {
 
       {/* Wireframe Preview Modal */}
       {showWireframeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-3xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800 bg-slate-950">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="relative w-full max-w-2xl bg-[#0d0f16] border-2 border-slate-700 rounded-xl shadow-2xl overflow-hidden flex flex-col font-mono">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-[#07080d]">
               <div className="flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-purple-400" />
-                <h3 className="text-base font-bold text-white">
-                  Boceto Original
+                <ImageIcon className="w-4 h-4 text-lime-400" />
+                <h3 className="font-display font-bold text-base text-white tracking-wider uppercase">
+                  BOCETO ORIGINAL DE KEWISITO
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowWireframeModal(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800"
+                className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-5 flex flex-col items-center">
-              <div className="border border-slate-700 rounded-xl overflow-hidden bg-white max-h-[60vh]">
+            <div className="p-4 flex flex-col items-center">
+              <div className="border border-slate-700 rounded-lg overflow-hidden bg-white max-h-[55vh]">
                 <img
                   src="/assets/aistudio/imagen_49e2f78e.png"
-                  alt="Boceto original del diseño subido por el usuario"
-                  className="max-h-[55vh] object-contain w-auto mx-auto"
+                  alt="Boceto original del diseño"
+                  className="max-h-[50vh] object-contain w-auto mx-auto"
                 />
               </div>
-              <p className="text-xs text-slate-300 text-center mt-3">
-                Diseño 1:1 con la columna izquierda <strong>REDES</strong> y <strong>total seguidores</strong>, y columna derecha con tu <strong>directo</strong>.
+              <p className="text-[11px] text-slate-400 text-center mt-3">
+                Estructura 1:1: Columna izquierda <strong>REDES</strong> con <strong>total seguidores</strong>, y columna derecha con <strong>directo</strong>.
               </p>
             </div>
           </div>
