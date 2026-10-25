@@ -9,20 +9,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProd = process.env.NODE_ENV === 'production';
 
-// In-memory cache to prevent excessive requests while keeping real-time responsiveness
+// In-memory cache to prevent excessive requests while keeping instantaneous freshness
 interface CacheData {
   data: any;
   timestamp: number;
 }
 let statsCache: CacheData | null = null;
-const CACHE_TTL_MS = 5000; // 5 seconds cache for real-time freshness
+const CACHE_TTL_MS = 1500; // 1.5s cache for fast live updates
 
 // Fallback baseline values in case of temporary network timeouts
 const FALLBACKS = {
   twitch: 36,
-  tiktok: 5863,
+  tiktok: 5862,
   instagram: 193,
-  discord: 83,
+  discord: 82,
   whatsapp: 12,
   youtube: 0,
 };
@@ -146,7 +146,6 @@ async function fetchYouTube(): Promise<number> {
       },
     });
     const text = await res.text();
-    // Try to extract subscriber text (e.g. "12 subscribers", "1.2K subscribers")
     const match = text.match(/"subscriberCountText":\{"simpleText":"([0-9,.]+[KkMm]?)\s*sub/i);
     if (match && match[1]) {
       const raw = match[1];
@@ -161,9 +160,9 @@ async function fetchYouTube(): Promise<number> {
   }
 }
 
-async function fetchAllSocialStats() {
+async function fetchAllSocialStats(force = false) {
   const now = Date.now();
-  if (statsCache && now - statsCache.timestamp < CACHE_TTL_MS) {
+  if (!force && statsCache && now - statsCache.timestamp < CACHE_TTL_MS) {
     return statsCache.data;
   }
 
@@ -210,7 +209,44 @@ async function fetchAllSocialStats() {
   return responseData;
 }
 
-// API endpoint for real-time follower counts
+// Active Server-Sent Events (SSE) clients for instant push
+const sseClients = new Set<Response>();
+
+function broadcastStats(data: any) {
+  const payload = `data: ${JSON.stringify(data)}\n\n`;
+  for (const client of sseClients) {
+    try {
+      client.write(payload);
+    } catch {
+      sseClients.delete(client);
+    }
+  }
+}
+
+// SSE stream for instantaneous real-time updates
+app.get('/api/followers/stream', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders?.();
+
+  // Send current cached data immediately
+  if (statsCache) {
+    res.write(`data: ${JSON.stringify(statsCache.data)}\n\n`);
+  } else {
+    fetchAllSocialStats().then((data) => {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    });
+  }
+
+  sseClients.add(res);
+
+  req.on('close', () => {
+    sseClients.delete(res);
+  });
+});
+
+// REST API endpoint for real-time follower counts
 app.get('/api/followers', async (req: Request, res: Response) => {
   try {
     const stats = await fetchAllSocialStats();
@@ -248,6 +284,16 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
+
+  // Background ticker that queries platforms continuously and pushes instant updates
+  setInterval(async () => {
+    try {
+      const freshData = await fetchAllSocialStats(true);
+      broadcastStats(freshData);
+    } catch {
+      // Ignore background transient errors
+    }
+  }, 2000);
 }
 
 startServer();

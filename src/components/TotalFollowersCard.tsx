@@ -15,10 +15,10 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
   const total = socials.reduce((acc, curr) => acc + curr.followers, 0);
   const [displayCount, setDisplayCount] = useState(total);
 
-  // Smooth number ticker effect on total change
+  // Instantaneous smooth number ticker effect on total change
   useEffect(() => {
     let start = displayCount;
-    const duration = 600;
+    const duration = 200; // 200ms for instantaneous responsive update
     const stepTime = 16;
     const totalSteps = Math.max(1, duration / stepTime);
     const increment = (total - start) / totalSteps;

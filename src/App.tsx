@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Tv, Users, ExternalLink } from 'lucide-react';
+import { Tv, Users } from 'lucide-react';
 import { SocialNetwork } from './types';
 import { INITIAL_SOCIALS } from './data/socials';
 import { SocialCard } from './components/SocialCard';
@@ -20,8 +20,48 @@ export default function App() {
 
   const isMountedRef = useRef(true);
 
-  // Background real-time synchronization function
-  const syncFollowers = async () => {
+  // Helper to apply incoming stats to state
+  const applyStats = (data: any) => {
+    if (!data) return;
+    const { twitch, tiktok, instagram, youtube, discord, whatsapp } = data;
+
+    setSocials((prev) =>
+      prev.map((item) => {
+        if (item.id === 'twitch' && twitch?.followers !== undefined) {
+          return { ...item, followers: twitch.followers };
+        }
+        if (item.id === 'tiktok' && tiktok?.followers !== undefined) {
+          return { ...item, followers: tiktok.followers };
+        }
+        if (item.id === 'instagram' && instagram?.followers !== undefined) {
+          return { ...item, followers: instagram.followers };
+        }
+        if (item.id === 'youtube' && youtube?.followers !== undefined) {
+          return { ...item, followers: youtube.followers };
+        }
+        if (item.id === 'discord' && discord?.followers !== undefined) {
+          return { ...item, followers: discord.followers };
+        }
+        if (item.id === 'whatsapp' && whatsapp?.followers !== undefined) {
+          return { ...item, followers: whatsapp.followers };
+        }
+        return item;
+      })
+    );
+
+    if (twitch) {
+      setStreamInfo({
+        isLive: !!twitch.isLive,
+        title: twitch.title,
+        game: twitch.game,
+      });
+    }
+
+    setLastSyncTime(new Date().toLocaleTimeString('es-ES'));
+  };
+
+  // Immediate fetch via REST
+  const fetchFollowersNow = async () => {
     if (!isMountedRef.current) return;
     setIsSyncing(true);
 
@@ -30,48 +70,13 @@ export default function App() {
       if (response.ok) {
         const json = await response.json();
         if (json.success && json.data) {
-          const { twitch, tiktok, instagram, youtube, discord, whatsapp } =
-            json.data;
-
-          setSocials((prev) =>
-            prev.map((item) => {
-              if (item.id === 'twitch' && twitch?.followers !== undefined) {
-                return { ...item, followers: twitch.followers };
-              }
-              if (item.id === 'tiktok' && tiktok?.followers !== undefined) {
-                return { ...item, followers: tiktok.followers };
-              }
-              if (item.id === 'instagram' && instagram?.followers !== undefined) {
-                return { ...item, followers: instagram.followers };
-              }
-              if (item.id === 'youtube' && youtube?.followers !== undefined) {
-                return { ...item, followers: youtube.followers };
-              }
-              if (item.id === 'discord' && discord?.followers !== undefined) {
-                return { ...item, followers: discord.followers };
-              }
-              if (item.id === 'whatsapp' && whatsapp?.followers !== undefined) {
-                return { ...item, followers: whatsapp.followers };
-              }
-              return item;
-            })
-          );
-
-          if (twitch) {
-            setStreamInfo({
-              isLive: !!twitch.isLive,
-              title: twitch.title,
-              game: twitch.game,
-            });
-          }
-
-          setLastSyncTime(new Date().toLocaleTimeString('es-ES'));
+          applyStats(json.data);
           setIsSyncing(false);
           return;
         }
       }
     } catch {
-      // Fallback
+      // Fallback to client-side public API
     }
 
     try {
@@ -93,22 +98,41 @@ export default function App() {
       // Ignore
     }
 
-    setLastSyncTime(new Date().toLocaleTimeString('es-ES'));
     setIsSyncing(false);
   };
 
-  // Continuous background synchronization interval (polls silently every 6 seconds)
+  // Instant real-time updates via Server-Sent Events (SSE) + fast polling
   useEffect(() => {
     isMountedRef.current = true;
-    syncFollowers();
+    fetchFollowersNow();
 
-    const intervalId = setInterval(() => {
-      syncFollowers();
-    }, 6000);
+    let eventSource: EventSource | null = null;
+    try {
+      eventSource = new EventSource('/api/followers/stream');
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          applyStats(data);
+        } catch {
+          // Ignore parse errors
+        }
+      };
+      eventSource.onerror = () => {
+        // Fallback gracefully to short polling if SSE disconnects
+      };
+    } catch {
+      // Fallback if EventSource not supported
+    }
+
+    // High-frequency live polling interval (every 1.5 seconds) ensuring continuous instant updates
+    const pollInterval = setInterval(() => {
+      fetchFollowersNow();
+    }, 1500);
 
     return () => {
       isMountedRef.current = false;
-      clearInterval(intervalId);
+      if (eventSource) eventSource.close();
+      clearInterval(pollInterval);
     };
   }, []);
 
@@ -155,7 +179,7 @@ export default function App() {
       </div>
 
       {/* Main Content Area - Faithfully implements user wireframe */}
-      <main className="relative z-10 flex-1 max-w-[1520px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="relative z-10 flex-1 max-w-[1520px] w-full mx-auto p-4 sm:p-6 lg:p-8 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
           {/* ======================================================== */}
           {/* LEFT COLUMN: "REDES" */}
@@ -166,18 +190,12 @@ export default function App() {
             }`}
             aria-label="Redes Sociales de Kewisito"
           >
-            {/* Column Header: "REDES" */}
-            <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-2.5">
-                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#537895] to-[#302b63] shadow-[0_0_10px_#537895]" />
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
-                  REDES
-                </h2>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-cyan-300 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#38bdf8]" />
-                <span>Tiempo Real</span>
-              </div>
+            {/* Column Header: "REDES" (Clean: removed "tiempo real") */}
+            <div className="flex items-center gap-2.5 pb-1">
+              <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#537895] to-[#302b63] shadow-[0_0_10px_#537895]" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
+                REDES
+              </h2>
             </div>
 
             {/* List of social media casillas in kewisito.com pill style */}
@@ -209,20 +227,12 @@ export default function App() {
             }`}
             aria-label="Directo de Twitch"
           >
-            {/* Column Header: "directo" */}
-            <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-2.5">
-                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-red-500 to-purple-600 shadow-[0_0_10px_#ef4444]" />
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
-                  directo
-                </h2>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e0f8ff] bg-[rgba(145,70,255,0.35)] border border-[rgba(169,112,255,0.6)] px-3 py-1 rounded-full shadow-[0_0_10px_rgba(145,70,255,0.4)]">
-                  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-                  kewisitotv en Twitch
-                </span>
-              </div>
+            {/* Column Header: "directo" (Clean: removed "kewisitotv en Twitch") */}
+            <div className="flex items-center gap-2.5 pb-1">
+              <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-red-500 to-purple-600 shadow-[0_0_10px_#ef4444]" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
+                directo
+              </h2>
             </div>
 
             {/* Twitch Player Container in kewisito.com glass card style */}
@@ -276,36 +286,6 @@ export default function App() {
           </section>
         </div>
       </main>
-
-      {/* Footer in kewisito.com style */}
-      <footer className="mt-auto border-t border-[rgba(224,248,255,0.2)] bg-[rgba(15,12,41,0.7)] backdrop-blur-md py-5 px-4 z-10">
-        <div className="max-w-[1520px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#e0f8ff]/80">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-white tracking-wider">
-              KEWISITO HUB
-            </span>
-            <span>·</span>
-            <span>Canal Twitch: @kewisitotv · Redes: @kewisito</span>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <a
-              href="https://kewisito.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-cyan-300 hover:text-white transition-colors font-medium underline"
-            >
-              <span>Visitar kewisito.com</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-            <span>·</span>
-            <span className="flex items-center gap-1.5 text-cyan-300 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#38bdf8]" />
-              Sincronización activa
-            </span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
