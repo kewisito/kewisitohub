@@ -303,8 +303,13 @@ app.get('/api/followers/stream', (req: Request, res: Response) => {
   });
 });
 
-// REST API endpoint for real-time follower counts
+// REST API endpoint for real-time follower counts with strict anti-cache headers
 app.get('/api/followers', async (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+
   try {
     const stats = await fetchAllSocialStats();
     res.json({
