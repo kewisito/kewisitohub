@@ -5,11 +5,13 @@ import { getSocialIcon } from './SocialIcons';
 interface SocialCardProps {
   network: SocialNetwork;
   totalFollowers: number;
+  index?: number;
 }
 
 export const SocialCard: React.FC<SocialCardProps> = ({
   network,
   totalFollowers,
+  index = 0,
 }) => {
   const percentage =
     totalFollowers > 0
@@ -20,17 +22,21 @@ export const SocialCard: React.FC<SocialCardProps> = ({
     network.followers
   );
 
+  // Exact staggered animation delay matching kewisito.com (0.35s + 0.05s * index)
+  const animDelay = `${0.35 + index * 0.05}s`;
+
   return (
     <a
       href={network.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex items-center justify-between p-3.5 sm:p-4 rounded-full transition-all duration-300 bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.65)] hover:border-[#e0f8ff] shadow-[inset_0_0_10px_rgba(83,120,149,0.5),0_0_15px_rgba(48,43,99,0.5)] hover:shadow-[inset_0_0_15px_rgba(83,120,149,0.8),0_0_25px_rgba(48,43,99,0.8)] hover:scale-[1.02] overflow-hidden cursor-pointer block"
+      style={{ animationDelay: animDelay }}
+      className="kewisito-link-card anim-slide-up group relative flex items-center justify-between p-3.5 sm:p-4 rounded-full overflow-hidden cursor-pointer block"
       title={`Abrir perfil de ${network.name} (${network.handle})`}
     >
-      {/* Subtle brand tint overlay inside the card */}
+      {/* Subtle brand glow overlay inside the card */}
       <div
-        className="absolute inset-0 opacity-15 group-hover:opacity-25 transition-opacity pointer-events-none rounded-full"
+        className="absolute inset-0 opacity-15 group-hover:opacity-30 transition-opacity pointer-events-none rounded-full"
         style={{
           background: `radial-gradient(circle at 15% 50%, ${network.brandColor}, transparent 65%)`,
         }}
@@ -39,7 +45,7 @@ export const SocialCard: React.FC<SocialCardProps> = ({
       {/* Left side: Icon + Name + Handle */}
       <div className="flex items-center gap-3 sm:gap-4 min-w-0 z-10 pl-1 sm:pl-2">
         <div
-          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 border border-[rgba(224,248,255,0.7)] transition-transform duration-300 group-hover:scale-105 shadow-[0_0_10px_rgba(83,120,149,0.5)]"
+          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 border border-[rgba(224,248,255,0.7)] transition-transform duration-300 group-hover:scale-110 shadow-[0_0_10px_rgba(83,120,149,0.5)]"
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             color: network.brandColor,

@@ -51,7 +51,10 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
   const formattedRemaining = new Intl.NumberFormat('es-ES').format(remaining);
 
   return (
-    <div className="relative rounded-[28px] p-5 sm:p-6 bg-[rgba(0,0,0,0.5)] backdrop-blur-xl border-2 border-[rgba(224,248,255,0.7)] shadow-[inset_0_0_15px_rgba(83,120,149,0.5),0_0_25px_rgba(48,43,99,0.6)] overflow-hidden transition-all duration-300 hover:border-[#e0f8ff] hover:shadow-[inset_0_0_20px_rgba(83,120,149,0.7),0_0_35px_rgba(48,43,99,0.8)]">
+    <div
+      style={{ animationDelay: '0.65s' }}
+      className="anim-slide-up relative rounded-[28px] p-5 sm:p-6 bg-[rgba(0,0,0,0.5)] backdrop-blur-xl border-2 border-[rgba(224,248,255,0.7)] shadow-[inset_0_0_15px_rgba(83,120,149,0.5),0_0_25px_rgba(48,43,99,0.6)] overflow-hidden transition-all duration-300 hover:border-[#e0f8ff] hover:shadow-[inset_0_0_20px_rgba(83,120,149,0.7),0_0_35px_rgba(48,43,99,0.8)]"
+    >
       {/* Subtle cosmic background nebula */}
       <div className="absolute -top-16 -right-16 w-48 h-48 bg-[#537895]/25 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#302b63]/40 rounded-full blur-3xl pointer-events-none" />

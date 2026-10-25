@@ -15,7 +15,7 @@ interface CacheData {
   timestamp: number;
 }
 let statsCache: CacheData | null = null;
-const CACHE_TTL_MS = 1500; // 1.5s cache for fast live updates
+const CACHE_TTL_MS = 2000;
 
 // Fallback baseline values in case of temporary network timeouts
 const FALLBACKS = {
@@ -27,8 +27,47 @@ const FALLBACKS = {
   youtube: 0,
 };
 
-// 1. Twitch via Decapi Public API
+// Persistent in-memory cache for Twitch metadata to prevent Decapi 429 rate-limiting
+let twitchCache = {
+  count: FALLBACKS.twitch,
+  isLive: false,
+  title: 'SE ME DAÑO LA CAMARA AYUDA',
+  game: 'Just Chatting',
+  lastFetched: 0,
+};
+
+// Validates stream title/game text to reject any 429 or HTTP error strings
+function isValidStreamText(text?: string | null): boolean {
+  if (!text) return false;
+  const clean = text.trim().toLowerCase();
+  if (
+    clean.includes('429') ||
+    clean.includes('too many') ||
+    clean.includes('rate limit') ||
+    clean.includes('404') ||
+    clean.includes('500') ||
+    clean.includes('error') ||
+    clean.includes('cloudflare') ||
+    clean.includes('service unavailable')
+  ) {
+    return false;
+  }
+  return clean.length > 0;
+}
+
+// 1. Twitch via Decapi Public API with rate-limit protection
 async function fetchTwitch(): Promise<{ count: number; isLive: boolean; title?: string; game?: string }> {
+  const now = Date.now();
+  // Throttle Decapi calls to at most once every 15 seconds to strictly prevent 429 errors
+  if (now - twitchCache.lastFetched < 15000 && twitchCache.lastFetched > 0) {
+    return {
+      count: twitchCache.count,
+      isLive: twitchCache.isLive,
+      title: twitchCache.title,
+      game: twitchCache.game,
+    };
+  }
+
   try {
     const [countRes, uptimeRes, titleRes, gameRes] = await Promise.all([
       fetch('https://decapi.me/twitch/followcount/kewisitotv', { headers: { 'User-Agent': 'Mozilla/5.0' } }),
@@ -37,24 +76,42 @@ async function fetchTwitch(): Promise<{ count: number; isLive: boolean; title?: 
       fetch('https://decapi.me/twitch/game/kewisitotv', { headers: { 'User-Agent': 'Mozilla/5.0' } }),
     ]);
 
-    const countText = await countRes.text();
-    const count = parseInt(countText.trim(), 10);
+    if (countRes.ok) {
+      const countText = await countRes.text();
+      const count = parseInt(countText.trim(), 10);
+      if (!isNaN(count)) twitchCache.count = count;
+    }
 
-    const uptimeText = await uptimeRes.text();
-    const isLive = !uptimeText.toLowerCase().includes('offline');
+    if (uptimeRes.ok) {
+      const uptimeText = await uptimeRes.text();
+      twitchCache.isLive = !uptimeText.toLowerCase().includes('offline');
+    }
 
-    const title = await titleRes.text();
-    const game = await gameRes.text();
+    if (titleRes.ok) {
+      const title = (await titleRes.text()).trim();
+      if (isValidStreamText(title)) {
+        twitchCache.title = title;
+      }
+    }
 
-    return {
-      count: !isNaN(count) ? count : FALLBACKS.twitch,
-      isLive,
-      title: title && !title.includes('404') ? title.trim() : undefined,
-      game: game && !game.includes('404') ? game.trim() : undefined,
-    };
+    if (gameRes.ok) {
+      const game = (await gameRes.text()).trim();
+      if (isValidStreamText(game)) {
+        twitchCache.game = game;
+      }
+    }
+
+    twitchCache.lastFetched = now;
   } catch {
-    return { count: FALLBACKS.twitch, isLive: false };
+    // Keep cached values on any error
   }
+
+  return {
+    count: twitchCache.count,
+    isLive: twitchCache.isLive,
+    title: twitchCache.title,
+    game: twitchCache.game,
+  };
 }
 
 // 2. TikTok via Public Web Profile Scraping
@@ -293,7 +350,7 @@ async function startServer() {
     } catch {
       // Ignore background transient errors
     }
-  }, 2000);
+  }, 2500);
 }
 
 startServer();

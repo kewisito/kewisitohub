@@ -47,7 +47,10 @@ export const TwitchPlayer: React.FC<TwitchPlayerProps> = ({
   const streamEmbedUrl = `https://player.twitch.tv/?channel=${channel}&${parentParams}&muted=false&autoplay=true`;
 
   return (
-    <div className="flex flex-col h-full rounded-[28px] bg-[rgba(0,0,0,0.5)] backdrop-blur-xl border-2 border-[rgba(224,248,255,0.7)] shadow-[inset_0_0_15px_rgba(83,120,149,0.5),0_0_25px_rgba(48,43,99,0.6)] overflow-hidden transition-all duration-300 hover:border-[#e0f8ff]">
+    <div
+      style={{ animationDelay: '0.4s' }}
+      className="anim-slide-right flex flex-col h-full rounded-[28px] bg-[rgba(0,0,0,0.5)] backdrop-blur-xl border-2 border-[rgba(224,248,255,0.7)] shadow-[inset_0_0_15px_rgba(83,120,149,0.5),0_0_25px_rgba(48,43,99,0.6)] overflow-hidden transition-all duration-300 hover:border-[#e0f8ff]"
+    >
       {/* Streamer Header Bar: Only title and category */}
       <div className="flex items-center justify-between gap-3 px-5 py-3.5 bg-[rgba(15,12,41,0.6)] border-b border-[rgba(224,248,255,0.25)] min-h-[52px]">
         <div className="flex items-center gap-3 min-w-0">

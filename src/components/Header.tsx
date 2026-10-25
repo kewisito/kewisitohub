@@ -14,11 +14,14 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-[1520px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         {/* Left: Streamer identity & official avatar from kewisito.com */}
         <div className="flex items-center gap-3.5">
-          <div className="relative shrink-0">
+          <div
+            style={{ animationDelay: '0.2s' }}
+            className="anim-slide-up relative shrink-0"
+          >
             <img
               src="/streamer-avatar.png"
               alt="Kewisito Avatar"
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover border-[3px] border-[#e0f8ff] shadow-[0_0_15px_#537895,0_0_25px_#302b63] transition-transform duration-300 hover:scale-105"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover border-[3px] border-[#e0f8ff] shadow-[0_0_15px_#537895,0_0_25px_#302b63] transition-transform duration-300 hover:scale-110"
             />
             {/* Live pulsing dot */}
             <span
@@ -30,7 +33,10 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          <div>
+          <div
+            style={{ animationDelay: '0.3s' }}
+            className="anim-slide-up"
+          >
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-bold text-[#e0f8ff] tracking-wide leading-none kewisito-glow-text">
                 @Kewisito
@@ -53,8 +59,11 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Right side: Real-time live status indicator in kewisito.com palette */}
-        <div className="flex items-center gap-2 text-xs">
+        {/* Right side: Real-time live status indicator with animation */}
+        <div
+          style={{ animationDelay: '0.35s' }}
+          className="anim-slide-up flex items-center gap-2 text-xs"
+        >
           <span className="flex h-2.5 w-2.5 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />

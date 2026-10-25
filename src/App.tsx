@@ -190,21 +190,25 @@ export default function App() {
             }`}
             aria-label="Redes Sociales de Kewisito"
           >
-            {/* Column Header: "REDES" (Clean: removed "tiempo real") */}
-            <div className="flex items-center gap-2.5 pb-1">
+            {/* Column Header: "REDES" */}
+            <div
+              style={{ animationDelay: '0.3s' }}
+              className="anim-slide-up flex items-center gap-2.5 pb-1"
+            >
               <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#537895] to-[#302b63] shadow-[0_0_10px_#537895]" />
               <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
                 REDES
               </h2>
             </div>
 
-            {/* List of social media casillas in kewisito.com pill style */}
+            {/* List of social media casillas in kewisito.com pill style with staggered entrance */}
             <div className="flex flex-col gap-3">
-              {socials.map((net) => (
+              {socials.map((net, idx) => (
                 <SocialCard
                   key={net.id}
                   network={net}
                   totalFollowers={totalFollowers}
+                  index={idx}
                 />
               ))}
             </div>
@@ -227,8 +231,11 @@ export default function App() {
             }`}
             aria-label="Directo de Twitch"
           >
-            {/* Column Header: "directo" (Clean: removed "kewisitotv en Twitch") */}
-            <div className="flex items-center gap-2.5 pb-1">
+            {/* Column Header: "directo" */}
+            <div
+              style={{ animationDelay: '0.35s' }}
+              className="anim-slide-up flex items-center gap-2.5 pb-1"
+            >
               <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-red-500 to-purple-600 shadow-[0_0_10px_#ef4444]" />
               <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
                 directo
@@ -245,9 +252,12 @@ export default function App() {
               />
             </div>
 
-            {/* Bottom Info Cards in kewisito.com style */}
+            {/* Bottom Info Cards in kewisito.com style with staggered entrance */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
-              <div className="p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)]">
+              <div
+                style={{ animationDelay: '0.5s' }}
+                className="anim-slide-up p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)] hover:border-[#e0f8ff] transition-all duration-300"
+              >
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a5b4fc]">
                   Canal Principal
                 </span>
@@ -259,7 +269,10 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)]">
+              <div
+                style={{ animationDelay: '0.55s' }}
+                className="anim-slide-up p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)] hover:border-[#e0f8ff] transition-all duration-300"
+              >
                 <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
                   Comunidad en Vivo
                 </span>
@@ -271,7 +284,10 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)]">
+              <div
+                style={{ animationDelay: '0.6s' }}
+                className="anim-slide-up p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)] hover:border-[#e0f8ff] transition-all duration-300"
+              >
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a5b4fc]">
                   Hub Comunitario
                 </span>
