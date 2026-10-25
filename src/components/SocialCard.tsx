@@ -22,7 +22,7 @@ export const SocialCard: React.FC<SocialCardProps> = ({
     network.followers
   );
 
-  // Exact staggered animation delay matching kewisito.com (0.35s + 0.05s * index)
+  // Staggered animation delay matching kewisito.com
   const animDelay = `${0.35 + index * 0.05}s`;
 
   return (
@@ -30,8 +30,11 @@ export const SocialCard: React.FC<SocialCardProps> = ({
       href={network.url}
       target="_blank"
       rel="noopener noreferrer"
-      style={{ animationDelay: animDelay }}
-      className="kewisito-link-card anim-slide-up group relative flex items-center justify-between p-3.5 sm:p-4 rounded-full overflow-hidden cursor-pointer block"
+      style={{
+        animationDelay: animDelay,
+        borderColor: network.borderColor,
+      }}
+      className="kewisito-link-card anim-slide-up group relative flex items-center justify-between p-3.5 sm:p-4 rounded-full overflow-hidden cursor-pointer block border shadow-lg hover:shadow-[0_8px_25px_rgba(0,0,0,0.6)]"
       title={`Abrir perfil de ${network.name} (${network.handle})`}
     >
       {/* Subtle brand glow overlay inside the card */}
@@ -45,9 +48,9 @@ export const SocialCard: React.FC<SocialCardProps> = ({
       {/* Left side: Icon + Name + Handle */}
       <div className="flex items-center gap-3 sm:gap-4 min-w-0 z-10 pl-1 sm:pl-2">
         <div
-          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 border border-[rgba(224,248,255,0.7)] transition-transform duration-300 group-hover:scale-110 shadow-[0_0_10px_rgba(83,120,149,0.5)]"
+          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 border border-white/10 transition-transform duration-300 group-hover:scale-110 shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: network.brandBg || 'rgba(10, 8, 26, 0.7)',
             color: network.brandColor,
           }}
         >
@@ -60,7 +63,7 @@ export const SocialCard: React.FC<SocialCardProps> = ({
               {network.name}
             </h3>
             {network.id === 'twitch' && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-purple-200 bg-[rgba(145,70,255,0.35)] border border-[rgba(169,112,255,0.6)] px-2 py-0.5 rounded-full">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-purple-200 bg-[rgba(145,70,255,0.3)] border border-[rgba(169,112,255,0.4)] px-2 py-0.5 rounded-full">
                 <span className="w-1.5 h-1.5 rounded-full bg-purple-300 animate-ping" />
                 Stream
               </span>
@@ -78,14 +81,14 @@ export const SocialCard: React.FC<SocialCardProps> = ({
         </div>
       </div>
 
-      {/* Right side: Exact Counter formatted in kewisito.com palette */}
+      {/* Right side: Exact Counter in harmonious cosmic palette */}
       <div className="text-right shrink-0 z-10 pr-2 sm:pr-3">
         <div className="flex items-baseline justify-end gap-1 font-bold">
           <span className="text-xl sm:text-2xl font-bold text-[#e0f8ff] tracking-tight group-hover:scale-105 transition-transform kewisito-glow-text">
             {formattedCount}
           </span>
         </div>
-        <div className="text-[11px] font-semibold text-[#e0f8ff]/70 uppercase tracking-wider">
+        <div className="text-[11px] font-semibold text-[#a5b4fc]/80 uppercase tracking-wider">
           {network.labelFollowers}
         </div>
       </div>

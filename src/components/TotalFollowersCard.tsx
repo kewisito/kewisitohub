@@ -53,16 +53,16 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
   return (
     <div
       style={{ animationDelay: '0.65s' }}
-      className="anim-slide-up relative rounded-[28px] p-5 sm:p-6 bg-[rgba(0,0,0,0.5)] backdrop-blur-xl border-2 border-[rgba(224,248,255,0.7)] shadow-[inset_0_0_15px_rgba(83,120,149,0.5),0_0_25px_rgba(48,43,99,0.6)] overflow-hidden transition-all duration-300 hover:border-[#e0f8ff] hover:shadow-[inset_0_0_20px_rgba(83,120,149,0.7),0_0_35px_rgba(48,43,99,0.8)]"
+      className="anim-slide-up relative rounded-[28px] p-5 sm:p-6 bg-gradient-to-br from-[rgba(24,19,60,0.65)] to-[rgba(10,8,28,0.75)] backdrop-blur-xl border border-purple-500/30 shadow-[0_12px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden transition-all duration-300 hover:border-purple-400/50 hover:shadow-[0_16px_50px_rgba(48,43,99,0.55),inset_0_1px_0_rgba(255,255,255,0.15)]"
     >
       {/* Subtle cosmic background nebula */}
-      <div className="absolute -top-16 -right-16 w-48 h-48 bg-[#537895]/25 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#302b63]/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-16 -right-16 w-48 h-48 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-indigo-700/25 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header bar */}
       <div className="flex items-center justify-between mb-2.5 z-10 relative">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-[rgba(83,120,149,0.35)] border border-[rgba(224,248,255,0.6)] flex items-center justify-center text-[#e0f8ff] shadow-[0_0_12px_rgba(83,120,149,0.5)]">
+          <div className="w-9 h-9 rounded-full bg-purple-950/50 border border-purple-500/30 flex items-center justify-center text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.3)]">
             <Users className="w-5 h-5" />
           </div>
           <div>
@@ -76,7 +76,7 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
         </div>
 
         {/* Live sync indicator */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[rgba(0,0,0,0.6)] border border-[rgba(224,248,255,0.5)] text-xs text-[#e0f8ff] font-semibold">
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[rgba(15,12,41,0.7)] border border-purple-500/30 text-xs text-[#e0f8ff] font-semibold">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#38bdf8]" />
           <span>En vivo</span>
         </div>
@@ -85,7 +85,7 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
       {/* Main big counter display */}
       <div className="my-3 z-10 relative">
         <div className="flex items-baseline gap-2.5">
-          <span className="text-4xl sm:text-5xl font-black tracking-tight text-[#e0f8ff] drop-shadow-[0_0_20px_rgba(83,120,149,0.8)]">
+          <span className="text-4xl sm:text-5xl font-black tracking-tight text-[#e0f8ff] drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">
             {formattedTotal}
           </span>
           <span className="text-xs sm:text-sm font-semibold text-[#a5b4fc] uppercase tracking-wider">
@@ -106,7 +106,7 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
           </span>
         </div>
 
-        <div className="h-3 w-full bg-[rgba(0,0,0,0.6)] rounded-full overflow-hidden flex p-0.5 gap-0.5 border border-[rgba(224,248,255,0.4)] shadow-inner">
+        <div className="h-3 w-full bg-black/60 rounded-full overflow-hidden flex p-0.5 gap-0.5 border border-purple-500/20 shadow-inner">
           {socials.map((net) => {
             const widthPct = total > 0 ? (net.followers / total) * 100 : 0;
             return (
@@ -125,7 +125,7 @@ export const TotalFollowersCard: React.FC<TotalFollowersCardProps> = ({
       </div>
 
       {/* Goal Progress to next milestone */}
-      <div className="mt-4 pt-3 border-t border-[rgba(224,248,255,0.2)] flex items-center justify-between text-xs z-10 relative">
+      <div className="mt-4 pt-3 border-t border-purple-500/20 flex items-center justify-between text-xs z-10 relative">
         <div className="flex items-center gap-1.5 text-[#e0f8ff]">
           <TrendingUp className="w-4 h-4 text-cyan-400" />
           <span>

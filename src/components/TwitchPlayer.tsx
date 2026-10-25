@@ -49,10 +49,10 @@ export const TwitchPlayer: React.FC<TwitchPlayerProps> = ({
   return (
     <div
       style={{ animationDelay: '0.4s' }}
-      className="anim-slide-right flex flex-col h-full rounded-[28px] bg-[rgba(0,0,0,0.5)] backdrop-blur-xl border-2 border-[rgba(224,248,255,0.7)] shadow-[inset_0_0_15px_rgba(83,120,149,0.5),0_0_25px_rgba(48,43,99,0.6)] overflow-hidden transition-all duration-300 hover:border-[#e0f8ff]"
+      className="anim-slide-right flex flex-col h-full rounded-[28px] bg-[rgba(12,10,32,0.75)] backdrop-blur-xl border border-purple-500/30 shadow-[0_16px_45px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden transition-all duration-300 hover:border-purple-400/50 hover:shadow-[0_20px_55px_rgba(48,43,99,0.5)]"
     >
       {/* Streamer Header Bar: Only title and category */}
-      <div className="flex items-center justify-between gap-3 px-5 py-3.5 bg-[rgba(15,12,41,0.6)] border-b border-[rgba(224,248,255,0.25)] min-h-[52px]">
+      <div className="flex items-center justify-between gap-3 px-5 py-3.5 bg-[rgba(15,12,41,0.85)] border-b border-purple-500/20 min-h-[52px]">
         <div className="flex items-center gap-3 min-w-0">
           <div className="relative flex items-center justify-center shrink-0">
             <span
@@ -72,7 +72,7 @@ export const TwitchPlayer: React.FC<TwitchPlayerProps> = ({
               {streamTitle || 'Transmisión oficial de Kewisito'}
             </h2>
             {gameName && (
-              <span className="inline-flex items-center text-xs font-semibold text-[#e0f8ff] bg-[rgba(83,120,149,0.4)] border border-[rgba(224,248,255,0.5)] px-2.5 py-0.5 rounded-full shadow-[0_0_8px_rgba(83,120,149,0.5)] shrink-0">
+              <span className="inline-flex items-center text-xs font-semibold text-purple-200 bg-purple-950/60 border border-purple-500/35 px-2.5 py-0.5 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.3)] shrink-0">
                 {gameName}
               </span>
             )}
@@ -102,7 +102,7 @@ export const TwitchPlayer: React.FC<TwitchPlayerProps> = ({
       </div>
 
       {/* Stream Footer Info */}
-      <div className="px-5 py-3 bg-[rgba(15,12,41,0.7)] border-t border-[rgba(224,248,255,0.2)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#e0f8ff]/80">
+      <div className="px-5 py-3 bg-[rgba(12,10,32,0.85)] border-t border-purple-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-[#e0f8ff]/80">
         <div className="flex items-center gap-2 font-medium">
           <span
             className={`inline-block w-2.5 h-2.5 rounded-full ${

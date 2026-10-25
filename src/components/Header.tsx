@@ -10,7 +10,7 @@ export const Header: React.FC<HeaderProps> = ({
   lastUpdated,
 }) => {
   return (
-    <header className="w-full border-b border-[rgba(224,248,255,0.25)] bg-[rgba(15,12,41,0.7)] backdrop-blur-xl sticky top-0 z-40 shadow-[0_4px_25px_rgba(0,0,0,0.5)]">
+    <header className="w-full border-b border-purple-500/20 bg-[rgba(15,12,41,0.75)] backdrop-blur-xl sticky top-0 z-40 shadow-[0_4px_25px_rgba(0,0,0,0.5)]">
       <div className="max-w-[1520px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         {/* Left: Streamer identity & official avatar from kewisito.com */}
         <div className="flex items-center gap-3.5">
@@ -21,7 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
             <img
               src="/streamer-avatar.png"
               alt="Kewisito Avatar"
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover border-[3px] border-[#e0f8ff] shadow-[0_0_15px_#537895,0_0_25px_#302b63] transition-transform duration-300 hover:scale-110"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-purple-400/40 shadow-[0_0_15px_#537895,0_0_25px_#302b63] transition-transform duration-300 hover:scale-110"
             />
             {/* Live pulsing dot */}
             <span
@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-xl sm:text-2xl font-bold text-[#e0f8ff] tracking-wide leading-none kewisito-glow-text">
                 @Kewisito
               </h1>
-              <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#e0f8ff] bg-[rgba(83,120,149,0.35)] border border-[rgba(224,248,255,0.5)] px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(83,120,149,0.4)]">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#e0f8ff] bg-purple-950/50 border border-purple-500/35 px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.3)]">
                 Oficial
               </span>
             </div>

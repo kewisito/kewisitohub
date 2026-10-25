@@ -150,7 +150,7 @@ export default function App() {
 
       {/* Mobile Tab Switcher (Visible on small screens only) */}
       <div className="lg:hidden px-4 pt-3.5 z-10">
-        <div className="grid grid-cols-2 p-1 bg-[rgba(0,0,0,0.5)] backdrop-blur-md rounded-full border-2 border-[rgba(224,248,255,0.6)] shadow-[0_0_15px_rgba(83,120,149,0.5)]">
+        <div className="grid grid-cols-2 p-1 bg-[rgba(15,12,41,0.7)] backdrop-blur-md rounded-full border border-purple-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
           <button
             type="button"
             onClick={() => setMobileTab('redes')}
@@ -252,11 +252,11 @@ export default function App() {
               />
             </div>
 
-            {/* Bottom Info Cards in kewisito.com style with staggered entrance */}
+            {/* Bottom Info Cards in cosmic style with staggered entrance */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
               <div
                 style={{ animationDelay: '0.5s' }}
-                className="anim-slide-up p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)] hover:border-[#e0f8ff] transition-all duration-300"
+                className="anim-slide-up p-4 rounded-2xl bg-[rgba(15,12,41,0.6)] backdrop-blur-md border border-purple-500/25 shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:border-purple-400/40 transition-all duration-300"
               >
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a5b4fc]">
                   Canal Principal
@@ -271,7 +271,7 @@ export default function App() {
 
               <div
                 style={{ animationDelay: '0.55s' }}
-                className="anim-slide-up p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)] hover:border-[#e0f8ff] transition-all duration-300"
+                className="anim-slide-up p-4 rounded-2xl bg-[rgba(15,12,41,0.6)] backdrop-blur-md border border-purple-500/25 shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:border-purple-400/40 transition-all duration-300"
               >
                 <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
                   Comunidad en Vivo
@@ -286,7 +286,7 @@ export default function App() {
 
               <div
                 style={{ animationDelay: '0.6s' }}
-                className="anim-slide-up p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)] hover:border-[#e0f8ff] transition-all duration-300"
+                className="anim-slide-up p-4 rounded-2xl bg-[rgba(15,12,41,0.6)] backdrop-blur-md border border-purple-500/25 shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:border-purple-400/40 transition-all duration-300"
               >
                 <span className="text-xs font-bold uppercase tracking-wider text-[#a5b4fc]">
                   Hub Comunitario
