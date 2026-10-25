@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Tv, Users } from 'lucide-react';
+import { Tv, Users, ExternalLink } from 'lucide-react';
 import { SocialNetwork } from './types';
 import { INITIAL_SOCIALS } from './data/socials';
 import { SocialCard } from './components/SocialCard';
@@ -115,35 +115,25 @@ export default function App() {
   const totalFollowers = socials.reduce((acc, curr) => acc + curr.followers, 0);
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col font-sans selection:bg-purple-600 selection:text-white">
-      {/* Dynamic ambient background glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-purple-900/15 rounded-full blur-[140px]" />
-        <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] bg-indigo-900/10 rounded-full blur-[160px]" />
-        <div className="absolute bottom-[-10%] left-[25%] w-[40vw] h-[40vw] bg-cyan-900/10 rounded-full blur-[140px]" />
-        {/* Subtle grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px)`,
-            backgroundSize: '24px 24px',
-          }}
-        />
-      </div>
+    <div className="min-h-screen text-[#e0f8ff] flex flex-col font-sans selection:bg-[#537895] selection:text-white relative">
+      {/* kewisito.com official fondo.png artwork background */}
+      <div className="kewisito-bg" />
+      {/* kewisito.com cosmic animated gradient overlay */}
+      <div className="kewisito-gradient-overlay" />
 
       {/* Top Navbar */}
       <Header isLiveUpdating={true} lastUpdated={lastSyncTime} />
 
       {/* Mobile Tab Switcher (Visible on small screens only) */}
-      <div className="lg:hidden px-4 pt-3 z-10">
-        <div className="grid grid-cols-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800">
+      <div className="lg:hidden px-4 pt-3.5 z-10">
+        <div className="grid grid-cols-2 p-1 bg-[rgba(0,0,0,0.5)] backdrop-blur-md rounded-full border-2 border-[rgba(224,248,255,0.6)] shadow-[0_0_15px_rgba(83,120,149,0.5)]">
           <button
             type="button"
             onClick={() => setMobileTab('redes')}
-            className={`py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${
               mobileTab === 'redes'
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[rgba(83,120,149,0.7)] text-white shadow-[0_0_10px_#537895]'
+                : 'text-[#e0f8ff]/70 hover:text-white'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -152,10 +142,10 @@ export default function App() {
           <button
             type="button"
             onClick={() => setMobileTab('directo')}
-            className={`py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2 text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 ${
               mobileTab === 'directo'
-                ? 'bg-purple-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[rgba(145,70,255,0.7)] text-white shadow-[0_0_10px_#9146ff]'
+                : 'text-[#e0f8ff]/70 hover:text-white'
             }`}
           >
             <Tv className="w-3.5 h-3.5" />
@@ -178,20 +168,20 @@ export default function App() {
           >
             {/* Column Header: "REDES" */}
             <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-purple-500 to-indigo-600" />
-                <h2 className="text-xl sm:text-2xl font-black text-white tracking-wider uppercase">
+              <div className="flex items-center gap-2.5">
+                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-[#537895] to-[#302b63] shadow-[0_0_10px_#537895]" />
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
                   REDES
                 </h2>
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="flex items-center gap-1.5 text-xs text-cyan-300 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#38bdf8]" />
                 <span>Tiempo Real</span>
               </div>
             </div>
 
-            {/* List of social media casillas */}
-            <div className="flex flex-col gap-2.5">
+            {/* List of social media casillas in kewisito.com pill style */}
+            <div className="flex flex-col gap-3">
               {socials.map((net) => (
                 <SocialCard
                   key={net.id}
@@ -201,8 +191,8 @@ export default function App() {
               ))}
             </div>
 
-            {/* Bottom Section: "total seguidores" */}
-            <div className="mt-1">
+            {/* Bottom Section: "total seguidores" in kewisito.com glass card style */}
+            <div className="mt-2">
               <TotalFollowersCard
                 socials={socials}
                 isSyncing={isSyncing}
@@ -221,21 +211,21 @@ export default function App() {
           >
             {/* Column Header: "directo" */}
             <div className="flex items-center justify-between pb-1">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-red-500 to-pink-600" />
-                <h2 className="text-xl sm:text-2xl font-black text-white tracking-wider uppercase">
+              <div className="flex items-center gap-2.5">
+                <div className="w-2.5 h-6 rounded-full bg-gradient-to-b from-red-500 to-purple-600 shadow-[0_0_10px_#ef4444]" />
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#e0f8ff] tracking-wider uppercase kewisito-glow-text">
                   directo
                 </h2>
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-red-400 bg-red-950/60 border border-red-500/30 px-2.5 py-1 rounded-full">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e0f8ff] bg-[rgba(145,70,255,0.35)] border border-[rgba(169,112,255,0.6)] px-3 py-1 rounded-full shadow-[0_0_10px_rgba(145,70,255,0.4)]">
+                  <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
                   kewisitotv en Twitch
                 </span>
               </div>
             </div>
 
-            {/* Twitch Player Container */}
+            {/* Twitch Player Container in kewisito.com glass card style */}
             <div className="flex-1">
               <TwitchPlayer
                 channel="kewisitotv"
@@ -245,41 +235,41 @@ export default function App() {
               />
             </div>
 
-            {/* Stream info status badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-purple-400">
+            {/* Bottom Info Cards in kewisito.com style */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+              <div className="p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#a5b4fc]">
                   Canal Principal
                 </span>
-                <p className="text-sm font-bold text-white font-mono mt-0.5">
+                <p className="text-base font-bold text-white mt-0.5">
                   twitch.tv/kewisitotv
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Transmisión oficial de Kewisito.
+                <p className="text-xs text-[#e0f8ff]/70 mt-1">
+                  Transmisión oficial de Kewisito en Twitch.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+              <div className="p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)]">
+                <span className="text-xs font-bold uppercase tracking-wider text-cyan-300">
                   Comunidad en Vivo
                 </span>
-                <p className="text-sm font-bold text-white font-mono mt-0.5">
+                <p className="text-base font-bold text-white mt-0.5">
                   {new Intl.NumberFormat('es-ES').format(totalFollowers)} seguidores
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Actualización constante en segundo plano.
+                <p className="text-xs text-[#e0f8ff]/70 mt-1">
+                  Actualización constante en tiempo real.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400">
-                  Comunidad Directa
+              <div className="p-4 rounded-2xl bg-[rgba(0,0,0,0.45)] backdrop-blur-md border-2 border-[rgba(224,248,255,0.5)] shadow-[inset_0_0_10px_rgba(83,120,149,0.4),0_0_15px_rgba(48,43,99,0.4)]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#a5b4fc]">
+                  Hub Comunitario
                 </span>
-                <p className="text-sm font-bold text-white font-mono mt-0.5">
+                <p className="text-base font-bold text-white mt-0.5">
                   Discord & WhatsApp
                 </p>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Avisos inmediatos de directos y eventos.
+                <p className="text-xs text-[#e0f8ff]/70 mt-1">
+                  Avisos inmediatos de directos y novedades.
                 </p>
               </div>
             </div>
@@ -287,20 +277,30 @@ export default function App() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md py-6 px-4 z-10">
-        <div className="max-w-[1520px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      {/* Footer in kewisito.com style */}
+      <footer className="mt-auto border-t border-[rgba(224,248,255,0.2)] bg-[rgba(15,12,41,0.7)] backdrop-blur-md py-5 px-4 z-10">
+        <div className="max-w-[1520px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#e0f8ff]/80">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-white tracking-wider">
+            <span className="font-bold text-white tracking-wider">
               KEWISITO HUB
             </span>
             <span>·</span>
             <span>Canal Twitch: @kewisitotv · Redes: @kewisito</span>
           </div>
 
-          <div className="flex items-center gap-4 text-slate-400">
-            <span className="flex items-center gap-1.5 text-emerald-400 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="flex items-center gap-4">
+            <a
+              href="https://kewisito.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-cyan-300 hover:text-white transition-colors font-medium underline"
+            >
+              <span>Visitar kewisito.com</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <span>·</span>
+            <span className="flex items-center gap-1.5 text-cyan-300 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#38bdf8]" />
               Sincronización activa
             </span>
           </div>
